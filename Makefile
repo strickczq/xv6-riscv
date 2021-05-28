@@ -134,6 +134,7 @@ UPROGS=\
 	$U/_zombie\
 	$U/_hello\
 	$U/_loop\
+	$U/_prischedtest\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

@@ -12,3 +12,4 @@
 #define FSSIZE       1000  // size of file system in blocks
 #define MAXPATH      128   // maximum file path name
 #define NTICK        8     // maximum number of clock ticks per time-slice
+#define PRIORITY     10    // default priority

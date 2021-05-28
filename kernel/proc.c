@@ -120,6 +120,7 @@ found:
   p->pid = allocpid();
   p->state = USED;
   p->slice = NTICK;
+  p->priority = PRIORITY;
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -438,29 +439,48 @@ wait(uint64 addr)
 void
 scheduler(void)
 {
-  struct proc *p;
+  struct proc *p, *prev_p = 0, *next_p = 0;
   struct cpu *c = mycpu();
+  int high_priority, found;
   
   c->proc = 0;
   for(;;){
     // Avoid deadlock by ensuring that devices can interrupt.
     intr_on();
+    found = 0;
+    high_priority = 20;
 
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
-      if(p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
-        p->state = RUNNING;
-        c->proc = p;
-        swtch(&c->context, &p->context);
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
+      if(p->state == RUNNABLE && p->priority < high_priority){
+        // Release previous lock.
+        if(found) release(&next_p->lock);
+        found++;
+        // Set next process to run.
+        next_p = p;
+        high_priority = p->priority;
+        // Schedule for process with the same priority.
+        if(p == prev_p) high_priority++;
+        // Skip releasing the lock.
+        continue;
       }
       release(&p->lock);
+    }
+    
+    if(found){
+      // Switch to chosen process.  It is the process's job
+      // to release its lock and then reacquire it
+      // before jumping back to us.
+      next_p->state = RUNNING;
+      c->proc = next_p;
+      swtch(&c->context, &next_p->context);
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+      release(&next_p->lock);
+      // Record the previous scheduled process.
+      prev_p = next_p;
     }
   }
 }
@@ -651,7 +671,24 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    printf("slice left: %d ticks, %d %s %s", p->slice, p->pid, state, p->name);
+    printf("slice left: %d ticks, pid: %d, state: %s, priority: %d, %s", p->slice, p->pid, state, p->priority, p->name);
     printf("\n");
   }
+}
+
+int
+chpri(int pid, int priority)
+{
+  struct proc *p;
+
+  for(p = proc; p < &proc[NPROC]; p++){
+    acquire(&p->lock);
+    if(p->pid == pid){
+      p->priority = priority;
+      release(&p->lock);
+      return pid;
+    }
+    release(&p->lock);
+  }
+  return -1;
 }
