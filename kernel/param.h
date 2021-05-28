@@ -14,3 +14,4 @@
 #define NTICK        8     // maximum number of clock ticks per time-slice
 #define PRIORITY     10    // default priority
 #define MAXSEM       128   // maximum semaphores
+#define NSLAB        8     // number of slab

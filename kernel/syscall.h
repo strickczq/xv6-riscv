@@ -27,3 +27,6 @@
 #define SYS_sem_free      26
 #define SYS_sem_p         27
 #define SYS_sem_v         28
+#define SYS_slab_malloc   29
+#define SYS_slab_free     30
+#define SYS_slab_pa       31

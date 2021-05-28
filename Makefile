@@ -31,6 +31,8 @@ OBJS = \
   $K/virtio_disk.o \
   $K/sem.o \
   $K/syssem.o \
+  $K/slab.o \
+  $K/sysslab.o \
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
@@ -139,6 +141,7 @@ UPROGS=\
 	$U/_prischedtest\
 	$U/_sh_rw_nolock\
 	$U/_sh_rw_lock\
+	$U/_slabtest\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

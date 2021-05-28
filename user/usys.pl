@@ -43,3 +43,6 @@ entry("sem_create");
 entry("sem_free");
 entry("sem_p");
 entry("sem_v");
+entry("slab_malloc");
+entry("slab_free");
+entry("slab_pa");

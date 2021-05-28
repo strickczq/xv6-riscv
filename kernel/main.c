@@ -20,6 +20,7 @@ main()
     kvminit();       // create kernel page table
     kvminithart();   // turn on paging
     procinit();      // process table
+    slabinit();      // slab
     seminit();       // semaphore
     trapinit();      // trap vectors
     trapinithart();  // install kernel trap vector
