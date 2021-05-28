@@ -21,6 +21,7 @@ struct run {
 struct {
   struct spinlock lock;
   struct run *freelist;
+  uint ref_count[PHYSTOP >> PGSHIFT];
 } kmem;
 
 void
@@ -51,14 +52,18 @@ kfree(void *pa)
   if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
     panic("kfree");
 
-  // Fill with junk to catch dangling refs.
-  memset(pa, 1, PGSIZE);
-
   r = (struct run*)pa;
 
   acquire(&kmem.lock);
-  r->next = kmem.freelist;
-  kmem.freelist = r;
+  if(kmem.ref_count[(uint64)pa >> PGSHIFT] > 0){
+    kmem.ref_count[(uint64)pa >> PGSHIFT]--;
+  }
+  if(kmem.ref_count[(uint64)pa >> PGSHIFT] == 0){
+    // Fill with junk to catch dangling refs.
+    memset(pa, 1, PGSIZE);
+    r->next = kmem.freelist;
+    kmem.freelist = r;
+  }
   release(&kmem.lock);
 }
 
@@ -72,11 +77,34 @@ kalloc(void)
 
   acquire(&kmem.lock);
   r = kmem.freelist;
-  if(r)
+  if(r){
     kmem.freelist = r->next;
+    kmem.ref_count[(uint64)r >> PGSHIFT] = 1;
+  }
   release(&kmem.lock);
 
   if(r)
     memset((char*)r, 5, PGSIZE); // fill with junk
   return (void*)r;
+}
+
+void
+kref(void* pa) {
+  acquire(&kmem.lock);
+  kmem.ref_count[(uint64)pa >> PGSHIFT]++;
+  release(&kmem.lock);
+}
+
+void
+kderef(void* pa) {
+  char shall_free = 0;
+
+  acquire(&kmem.lock);
+  kmem.ref_count[(uint64)pa >> PGSHIFT]--;
+  if(kmem.ref_count[(uint64)pa >> PGSHIFT] == 0)
+    shall_free = 1;
+  release(&kmem.lock);
+
+  if(shall_free)
+    kfree(pa);
 }

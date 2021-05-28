@@ -30,3 +30,4 @@
 #define SYS_slab_malloc   29
 #define SYS_slab_free     30
 #define SYS_slab_pa       31
+#define SYS_forkcow       32

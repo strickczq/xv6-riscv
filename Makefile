@@ -142,6 +142,8 @@ UPROGS=\
 	$U/_sh_rw_nolock\
 	$U/_sh_rw_lock\
 	$U/_slabtest\
+	$U/_cowtest\
+	$U/_nocowtest\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

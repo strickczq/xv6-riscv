@@ -89,6 +89,7 @@ extern uint64 sys_dup(void);
 extern uint64 sys_exec(void);
 extern uint64 sys_exit(void);
 extern uint64 sys_fork(void);
+extern uint64 sys_forkcow(void);
 extern uint64 sys_fstat(void);
 extern uint64 sys_getpid(void);
 extern uint64 sys_kill(void);
@@ -117,6 +118,7 @@ extern uint64 sys_slab_pa(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]           sys_fork,
+[SYS_forkcow]        sys_forkcow,
 [SYS_exit]           sys_exit,
 [SYS_wait]           sys_wait,
 [SYS_pipe]           sys_pipe,

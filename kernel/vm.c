@@ -324,6 +324,61 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
   return -1;
 }
 
+// Given a parent process's page table, copy
+// its memory into a child's page table on write.
+// Copies both the page table and the
+// physical memory.
+// returns 0 on success, -1 on failure.
+// frees any allocated pages on failure.
+int
+uvmcopyonwrite(pagetable_t old, pagetable_t new, uint64 sz)
+{
+  pte_t *pte;
+  uint64 pa, i;
+  uint flags;
+
+  for(i = 0; i < sz; i += PGSIZE){
+    if((pte = walk(old, i, 0)) == 0)
+      panic("uvmcopy: pte should exist");
+    if((*pte & PTE_V) == 0)
+      panic("uvmcopy: page not present");
+    *pte &= ~PTE_W;
+    *pte |= PTE_COW;
+    pa = PTE2PA(*pte);
+    flags = PTE_FLAGS(*pte);
+    if(mappages(new, i, PGSIZE, pa, flags) != 0){
+      goto err;
+    }
+    kref((void *)pa);
+  }
+  return 0;
+
+err:
+  uvmunmap(new, 0, i / PGSIZE, 1);
+  return -1;
+}
+
+int
+copyonwrite(pagetable_t pagetable, uint64 va)
+{
+  pte_t *pte;
+  uint64 pa;
+  char *mem;
+
+
+  if((pte = walk(pagetable, va, 0)) == 0)
+    panic("uvmcopy: pte should exist");
+  if((*pte & PTE_V) == 0)
+    panic("uvmcopy: page not present");
+  pa = PTE2PA(*pte);
+  if((mem = kalloc()) == 0)
+    return -1;
+  memmove(mem, (char*)pa, PGSIZE);
+  kderef((void *)pa);
+  *pte = (PA2PTE(mem) | PTE_FLAGS(*pte) | PTE_W) & ~PTE_COW;
+  return 0;
+}
+
 // mark a PTE invalid for user access.
 // used by exec for the user stack guard page.
 void
