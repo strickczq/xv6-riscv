@@ -101,6 +101,7 @@ void            sleep(void*, struct spinlock*);
 void            userinit(void);
 int             wait(uint64);
 void            wakeup(void*);
+void            wakeup1p(void*);
 void            yield(void);
 int             either_copyout(int user_dst, uint64 dst, void *src, uint64 len);
 int             either_copyin(void *dst, int user_src, uint64 src, uint64 len);
@@ -123,6 +124,13 @@ void            acquiresleep(struct sleeplock*);
 void            releasesleep(struct sleeplock*);
 int             holdingsleep(struct sleeplock*);
 void            initsleeplock(struct sleeplock*, char*);
+
+// sem.c
+void            seminit(void);
+int             sem_create(int);
+void            sem_free(int);
+void            sem_p(int);
+void            sem_v(int);
 
 // string.c
 int             memcmp(const void*, const void*, uint);

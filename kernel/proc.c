@@ -593,6 +593,26 @@ wakeup(void *chan)
   }
 }
 
+// Wake up 1 process sleeping on chan.
+// Must be called without any p->lock.
+void
+wakeup1p(void *chan)
+{
+  struct proc *p;
+
+  for(p = proc; p < &proc[NPROC]; p++) {
+    if(p != myproc()){
+      acquire(&p->lock);
+      if(p->state == SLEEPING && p->chan == chan) {
+        p->state = RUNNABLE;
+        release(&p->lock);
+        break;
+      }
+      release(&p->lock);
+    }
+  }
+}
+
 // Kill the process with the given pid.
 // The victim won't exit until it tries to return
 // to user space (see usertrap() in trap.c).
