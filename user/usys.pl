@@ -47,3 +47,6 @@ entry("sem_v");
 entry("slab_malloc");
 entry("slab_free");
 entry("slab_pa");
+entry("clone");
+entry("join");
+entry("t_exit");

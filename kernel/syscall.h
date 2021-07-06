@@ -31,3 +31,6 @@
 #define SYS_slab_free     30
 #define SYS_slab_pa       31
 #define SYS_forkcow       32
+#define SYS_clone         33
+#define SYS_join          34
+#define SYS_t_exit        35

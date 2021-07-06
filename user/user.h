@@ -34,6 +34,9 @@ int sem_v(int);
 void* slab_malloc(uint);
 void slab_free(void*);
 void* slab_pa(void*);
+int clone(void);
+int join(int);
+void t_exit(int);
 
 // ulib.c
 int stat(const char*, struct stat*);

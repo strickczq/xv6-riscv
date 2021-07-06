@@ -115,6 +115,9 @@ extern uint64 sys_sem_v(void);
 extern uint64 sys_slab_malloc(void);
 extern uint64 sys_slab_free(void);
 extern uint64 sys_slab_pa(void);
+extern uint64 sys_clone(void);
+extern uint64 sys_join(void);
+extern uint64 sys_t_exit(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]           sys_fork,
@@ -149,6 +152,9 @@ static uint64 (*syscalls[])(void) = {
 [SYS_slab_malloc]    sys_slab_malloc,
 [SYS_slab_free]      sys_slab_free,
 [SYS_slab_pa]        sys_slab_pa,
+[SYS_clone]          sys_clone,
+[SYS_join]           sys_join,
+[SYS_t_exit]         sys_t_exit,
 };
 
 void

@@ -114,3 +114,28 @@ sys_chpri(void)
     return -1;
   return chpri(pid, priority);
 }
+
+uint64
+sys_clone(void)
+{
+  return clone();
+}
+
+uint64
+sys_join(void)
+{
+  uint64 addr;
+  if(argaddr(0, &addr) < 0)
+    return -1;
+  return join(addr);
+}
+
+uint64
+sys_t_exit(void)
+{
+  int n;
+  if(argint(0, &n) < 0)
+    return -1;
+  t_exit(n);
+  return 0;
+}

@@ -144,6 +144,7 @@ UPROGS=\
 	$U/_slabtest\
 	$U/_cowtest\
 	$U/_nocowtest\
+	$U/_threadtest\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
