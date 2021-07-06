@@ -30,7 +30,8 @@ struct superblock {
 
 // On-disk inode structure
 struct dinode {
-  short type;           // File type
+  char mode;           // Access mode
+  char type;           // File type
   short major;          // Major device number (T_DEVICE only)
   short minor;          // Minor device number (T_DEVICE only)
   short nlink;          // Number of links to inode in file system

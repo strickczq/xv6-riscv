@@ -235,6 +235,7 @@ ialloc(ushort type)
   struct dinode din;
 
   bzero(&din, sizeof(din));
+  din.mode = 3;
   din.type = xshort(type);
   din.nlink = xshort(1);
   din.size = xint(0);

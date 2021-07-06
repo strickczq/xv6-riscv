@@ -118,6 +118,7 @@ extern uint64 sys_slab_pa(void);
 extern uint64 sys_clone(void);
 extern uint64 sys_join(void);
 extern uint64 sys_t_exit(void);
+extern uint64 sys_chmod(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]           sys_fork,
@@ -155,6 +156,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_clone]          sys_clone,
 [SYS_join]           sys_join,
 [SYS_t_exit]         sys_t_exit,
+[SYS_chmod]          sys_chmod,
 };
 
 void

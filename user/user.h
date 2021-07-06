@@ -37,6 +37,7 @@ void* slab_pa(void*);
 int clone(void);
 int join(int);
 void t_exit(int);
+int chmod(char mode, const char*);
 
 // ulib.c
 int stat(const char*, struct stat*);

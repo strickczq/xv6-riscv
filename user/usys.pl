@@ -50,3 +50,4 @@ entry("slab_pa");
 entry("clone");
 entry("join");
 entry("t_exit");
+entry("chmod");

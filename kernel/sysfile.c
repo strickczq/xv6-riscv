@@ -484,3 +484,23 @@ sys_pipe(void)
   }
   return 0;
 }
+
+uint64
+sys_chmod(void)
+{
+  int mode;
+  char path[MAXPATH];
+  struct inode *ip;
+  
+  begin_op();
+  if(argint(0, &mode) < 0 || argstr(1, path, MAXPATH) < 0 || (ip = namei(path)) == 0){
+    end_op();
+    return -1;
+  }
+  ilock(ip);
+  ip->mode = (char)mode;
+  iupdate(ip);
+  iunlock(ip);
+  end_op();
+  return 0;
+}

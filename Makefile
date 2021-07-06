@@ -145,6 +145,7 @@ UPROGS=\
 	$U/_cowtest\
 	$U/_nocowtest\
 	$U/_threadtest\
+	$U/_chmod\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

@@ -119,8 +119,11 @@ fileread(struct file *f, uint64 addr, int n)
     r = devsw[f->major].read(1, addr, n);
   } else if(f->type == FD_INODE){
     ilock(f->ip);
-    if((r = readi(f->ip, 1, addr, f->off, n)) > 0)
+    if((f->ip->mode & 1) == 0){
+      printf("error: unreadable file.\n");
+    } else if((r = readi(f->ip, 1, addr, f->off, n)) > 0){
       f->off += r;
+    }
     iunlock(f->ip);
   } else {
     panic("fileread");
@@ -134,7 +137,7 @@ fileread(struct file *f, uint64 addr, int n)
 int
 filewrite(struct file *f, uint64 addr, int n)
 {
-  int r, ret = 0;
+  int r = 0, ret = 0;
 
   if(f->writable == 0)
     return -1;
@@ -161,8 +164,11 @@ filewrite(struct file *f, uint64 addr, int n)
 
       begin_op();
       ilock(f->ip);
-      if ((r = writei(f->ip, 1, addr + i, f->off, n1)) > 0)
+      if((f->ip->mode & 2) == 0){
+        printf("error: unwritable file.\n");
+      } else if ((r = writei(f->ip, 1, addr + i, f->off, n1)) > 0){
         f->off += r;
+      }
       iunlock(f->ip);
       end_op();
 
